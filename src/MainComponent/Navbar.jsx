@@ -55,7 +55,7 @@ export default function Navbar() {
               </a>
             </li>
             <li className="nav-item mx-1">
-              <a href="/customer-signup" className="nav-link fw-bold btnStyle">
+              <a href="/customer" className="nav-link fw-bold btnStyle">
                 Register
               </a>
             </li>
