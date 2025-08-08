@@ -241,3 +241,45 @@ body {
     margin-top: 20px;
   }
 }
+/*--------------------------------------------------------------
+  # Siwes card List
+  --------------------------------------------------------------*/
+.cardList {
+  background: linear-gradient(var(--softColor), var(--testColor));
+}
+.cardList .section-title h2 {
+  padding-top: 20px;
+  font-size: 40px;
+  color: var(--testColor);
+}
+.cardList .section-title p {
+  font-size: 20px;
+  color: var(--testColor);
+}
+
+.cardList .row .stateBody {
+  overflow: hidden;
+  background: linear-gradient(var(--testColor), var(--softColor));
+  border-top-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  height: 10vh;
+  transition: all 0.3s ease-in-out;
+  z-index: 1;
+}
+.cardList .row .stateBody:hover {
+  transform: translateY(-5px);
+}
+
+.cardList .row .stateBody a {
+  color: var(--softColor);
+  font-size: 20px;
+}
+
+@media (max-width: 768px) {
+  .cardList .section-title h2 {
+    font-size: 25px;
+  }
+  .cardList .section-title p {
+    font-size: 18px;
+  }
+}

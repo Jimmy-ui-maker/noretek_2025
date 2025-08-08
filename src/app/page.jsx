@@ -1,5 +1,5 @@
-
 import Navbar from "@/MainComponent/Navbar";
+import QuickLinks from "@/MainComponent/QuickLinks";
 
 export default function Home() {
   return (
@@ -36,6 +36,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <QuickLinks />
     </>
   );
 }
