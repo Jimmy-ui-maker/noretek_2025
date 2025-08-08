@@ -6,12 +6,11 @@ export default function Navbar() {
       <div className="container">
         <img
           src="/assets/logo.png"
-          className=" rounded-2"
-          width={300}
-          height={70}
+          className=" rounded-2 "
+          
           alt=""
         />
-       
+
         <button
           className="navbar-toggler shadow-none"
           type="button"
@@ -31,7 +30,7 @@ export default function Navbar() {
           <ul className="navbar-nav">
             <li className="nav-item mx-1">
               <a href="/" className="nav-link fw-bold">
-               Home
+                Home
               </a>
             </li>
             <li className="nav-item mx-1">
