@@ -245,7 +245,7 @@ body {
   # Siwes card List
   --------------------------------------------------------------*/
 .cardList {
-  background: linear-gradient(var(--softColor), var(--testColor));
+  background: linear-gradient(var(--testColor), var(--softColor));
 }
 .cardList .section-title h2 {
   padding-top: 20px;
