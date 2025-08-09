@@ -83,7 +83,7 @@ body {
 # MainPage Section
 --------------------------------------------------------------*/
 .mainPage {
-  background: linear-gradient(var(--testColor), var(--softColor)),
+  background: linear-gradient(var(--softColor), var(--testColor)),
     url("/assets/slider.png");
   background-blend-mode: multiply;
   background-position: center;
@@ -245,7 +245,7 @@ body {
   # Siwes card List
   --------------------------------------------------------------*/
 .cardList {
-  background: linear-gradient(var(--testColor), var(--softColor));
+  background: linear-gradient(var(--softColor), var(--testColor));
 }
 .cardList .section-title h2 {
   padding-top: 20px;
