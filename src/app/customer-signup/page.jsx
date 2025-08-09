@@ -22,8 +22,7 @@ export default function Signup() {
   };
 
   const handleSubmit = async (e) => {
-    {
-      /** 
+   
     e.preventDefault();
 
     if (form.password !== form.confirmPassword) {
@@ -43,8 +42,7 @@ export default function Signup() {
     } catch (err) {
       setMessage(err.response?.data?.message || "An error occurred");
     }
-      */
-    }
+      
   };
 
   return (

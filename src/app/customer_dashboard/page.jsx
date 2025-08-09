@@ -46,17 +46,17 @@ export default function UserDashboard() {
             <li className="nav-item mx-2">
               <a className="nav-link text-white text-truncate" href="">
                 <i className="bi bi-person me-2"></i>
-                {/** 
+                 
                 {email}
-                */}
+                
               </a>
             </li>
             <li className="nav-item mx-2">
-              {/** 
+              
               <button className="btn btn-outline-light" onClick={handleLogout}>
                 <i className="bi bi-box-arrow-right me-1"></i>
               </button>
-              */}
+              
             </li>
           </ul>
         </div>

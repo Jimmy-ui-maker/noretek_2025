@@ -1,3 +1,4 @@
+import AboutUS from "@/MainComponent/About";
 import Navbar from "@/MainComponent/Navbar";
 import QuickLinks from "@/MainComponent/QuickLinks";
 
@@ -17,18 +18,16 @@ export default function Home() {
               <div data-aos="fade-up" data-aos-delay="600">
                 <div class="text-center text-lg-start ">
                   <a
-                    href="/customer-signup"
-                    class="btn-get-started scrollto mx-1 d-inline-flex align-items-center justify-content-center align-self-center"
+                    href="/customer-signin"
+                    class="btn-get-started text-decoration-none py-4 scrollto mx-1 d-inline-flex align-items-center justify-content-center align-self-center"
                   >
-                    <span>Sign Up</span>
-                    <i class="bi bi-arrow-down"></i>
+                    <span>Login</span>
                   </a>
                   <a
-                    href="/customer-signin"
-                    class="btn-get-started scrollto mx-1 d-inline-flex align-items-center justify-content-center align-self-center"
+                    href="/customer-signup"
+                    class="btn-register text-decoration-none py-4 scrollto mx-1 d-inline-flex align-items-center justify-content-center align-self-center"
                   >
-                    <span>Sign In</span>
-                    <i class="bi bi-arrow-down"></i>
+                    <span>Register Now</span>
                   </a>
                 </div>
               </div>
@@ -36,6 +35,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <AboutUS />
       <QuickLinks />
     </>
   );

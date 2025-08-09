@@ -13,8 +13,7 @@ export default function Login() {
   };
 
   const handleSubmit = async (e) => {
-    {
-      /** 
+   
     e.preventDefault();
 
     if (!/\S+@\S+\.\S+/.test(form.email)) {
@@ -31,8 +30,7 @@ export default function Login() {
     } catch (err) {
       setMessage(err.response?.data?.message || "Login failed");
     }
-      */
-    }
+      
   };
 
   return (

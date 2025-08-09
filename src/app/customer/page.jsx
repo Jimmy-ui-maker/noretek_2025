@@ -1,35 +1,36 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 export default function CustomerPage() {
   const [loginData, setLoginData] = useState({
-    userId: '',
-    password: '',
-    company: 'Noretek Energy'
+    userId: "",
+    password: "",
+    company: "Noretek Energy",
   });
 
-  const [token, setToken] = useState('');
+  const [token, setToken] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
-  const [loginError, setLoginError] = useState('');
+  const [loginError, setLoginError] = useState("");
 
   const [formData, setFormData] = useState({
-    customerId: '',
-    customerName: '',
+    customerId: "",
+    customerName: "",
     type: 0,
-    phone: '',
-    address: '',
-    certifiName: '',
-    certifiNo: '',
-    remark: '',
-    company: 'Noretek Energy'
+    phone: "",
+    address: "",
+    certifiName: "",
+    certifiNo: "",
+    remark: "",
+    company: "Noretek Energy",
   });
 
-  const [formMessage, setFormMessage] = useState('');
+  const [formMessage, setFormMessage] = useState("");
+  const [formMessageType, setFormMessageType] = useState("");
 
   // Load token if already saved
   useEffect(() => {
-    const savedToken = localStorage.getItem('token');
+    const savedToken = localStorage.getItem("token");
     if (savedToken) {
       setToken(savedToken);
     }
@@ -47,58 +48,68 @@ export default function CustomerPage() {
 
   // Login to get token
   const handleLoginSubmit = async (e) => {
-    {/** 
     e.preventDefault();
     setLoginLoading(true);
-    setLoginError('');
+    setLoginError("");
     try {
-      const res = await fetch('http://47.107.69.132:9400/API/User/Login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("http://47.107.69.132:9400/API/User/Login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(loginData),
       });
       const data = await res.json();
+      console.log("Login API Response:", data);
+
       if (data?.result?.token) {
-        localStorage.setItem('token', data.result.token);
+        localStorage.setItem("token", data.result.token);
         setToken(data.result.token);
-        setFormMessage('Login successful. Token stored.');
+        setFormMessage("✅ Login successful. Token stored.");
+        setFormMessageType("success");
       } else {
-        setLoginError('Login failed. Check credentials.');
+        setLoginError(data?.message || "Login failed. Check credentials.");
       }
     } catch (err) {
-      setLoginError('An error occurred: ' + err.message);
+      setLoginError("An error occurred: " + err.message);
     } finally {
       setLoginLoading(false);
     }
-      */}
   };
 
-  
   // Submit customer creation form
   const handleCustomerSubmit = async (e) => {
-    {/** 
     e.preventDefault();
-    setFormMessage('');
+    setFormMessage("");
+    setFormMessageType("");
     try {
-      const res = await fetch('http://47.107.69.132:9400/API/Customer/Create', {
-        method: 'POST',
+      console.log("Submitting customer data:", formData);
+
+      const res = await fetch("http://47.107.69.132:9400/API/Customer/Create", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData),
+        // ✅ Wrap formData in array
+        body: JSON.stringify([formData]),
       });
 
       const data = await res.json();
+      console.log("Create Customer API Response:", data);
+
       if (data?.result) {
-        setFormMessage('Customer created successfully.');
+        setFormMessage("✅ Customer created successfully.");
+        setFormMessageType("success");
       } else {
-        setFormMessage('Failed to create customer: ' + (data.message || 'Unknown error'));
+        setFormMessage(
+          "❌ Failed to create customer: " +
+            (data?.message || JSON.stringify(data) || "Unknown error")
+        );
+        setFormMessageType("error");
       }
     } catch (err) {
-      setFormMessage('Error: ' + err.message);
+      setFormMessage("❌ Error: " + err.message);
+      setFormMessageType("error");
     }
-      */}
   };
 
   return (
@@ -143,11 +154,16 @@ export default function CustomerPage() {
                 required
               />
             </div>
-            <button type="submit" className="btn btn-primary w-100" disabled={loginLoading}>
-              {loginLoading ? 'Logging in...' : 'Login'}
+            <button
+              type="submit"
+              className="btn btn-primary w-100"
+              disabled={loginLoading}
+            >
+              {loginLoading ? "Logging in..." : "Login"}
             </button>
-            {loginError && <div className="alert alert-danger mt-3">{loginError}</div>}
-            {formMessage && <div className="alert alert-info mt-3">{formMessage}</div>}
+            {loginError && (
+              <div className="alert alert-danger mt-3">{loginError}</div>
+            )}
           </form>
         </div>
       </div>
@@ -158,11 +174,24 @@ export default function CustomerPage() {
           <h4>Create Customer</h4>
         </div>
         <div className="card-body">
+          {/* Message at the top */}
+          {formMessage && (
+            <div
+              className={`alert ${
+                formMessageType === "success"
+                  ? "alert-success"
+                  : "alert-danger"
+              }`}
+            >
+              {formMessage}
+            </div>
+          )}
+
           <form onSubmit={handleCustomerSubmit} className="row g-3">
             {Object.entries(formData).map(([key, value]) => (
               <div className="col-md-6" key={key}>
                 <label htmlFor={key} className="form-label text-capitalize">
-                  {key.replace(/([A-Z])/g, ' $1')}
+                  {key.replace(/([A-Z])/g, " $1")}
                 </label>
                 <input
                   type="text"
@@ -171,8 +200,8 @@ export default function CustomerPage() {
                   name={key}
                   value={value}
                   onChange={handleCustomerChange}
-                  required={key !== 'remark'}
-                  readOnly={key === 'company'}
+                  required={key !== "remark"}
+                  readOnly={key === "company"}
                 />
               </div>
             ))}
@@ -180,7 +209,6 @@ export default function CustomerPage() {
               <button type="submit" className="btn btn-success px-4">
                 Submit
               </button>
-              
             </div>
           </form>
         </div>
