@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 
 export default function CustomerPage() {
+  {
+    /** 
   const [loginData, setLoginData] = useState({
     userId: "",
     password: "",
@@ -111,10 +113,11 @@ export default function CustomerPage() {
       setFormMessageType("error");
     }
   };
-
+*/
+  }
   return (
     <div className="container mt-5">
-      {/* LOGIN FORM */}
+      {/* LOGIN FORM 
       <div className="card mb-5 shadow">
         <div className="card-header bg-dark text-white text-center">
           <h4>Login to Get Token</h4>
@@ -167,26 +170,25 @@ export default function CustomerPage() {
           </form>
         </div>
       </div>
-
+*/}
       {/* CUSTOMER FORM */}
       <div className="card shadow">
         <div className="card-header bg-primary text-white text-center">
           <h4>Create Customer</h4>
         </div>
         <div className="card-body">
-          {/* Message at the top */}
+          {/* Message at the top 
           {formMessage && (
             <div
               className={`alert ${
-                formMessageType === "success"
-                  ? "alert-success"
-                  : "alert-danger"
+                formMessageType === "success" ? "alert-success" : "alert-danger"
               }`}
             >
               {formMessage}
             </div>
           )}
-
+*/}
+          {/**
           <form onSubmit={handleCustomerSubmit} className="row g-3">
             {Object.entries(formData).map(([key, value]) => (
               <div className="col-md-6" key={key}>
@@ -211,6 +213,7 @@ export default function CustomerPage() {
               </button>
             </div>
           </form>
+           */}
         </div>
       </div>
     </div>

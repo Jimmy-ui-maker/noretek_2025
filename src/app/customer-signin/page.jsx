@@ -4,12 +4,14 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 
 export default function Login() {
+  {
+    /** 
   const router = useRouter();
   const [form, setForm] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
 
    
-  {/** 
+  
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -36,15 +38,17 @@ export default function Login() {
     }
       
   };
-*/}
-  
+*/
+  }
+
   return (
     <div className="container d-flex justify-content-center align-items-center min-vh-100">
       <div className="border p-5 rounded w-100" style={{ maxWidth: 400 }}>
         <h4 className="mb-4 text-center">Customer Login</h4>
 
+        {/** 
         {message && <div className="alert alert-info">{message}</div>}
-        <form onSubmit={'handleSubmit'}>
+        <form onSubmit={"handleSubmit"}>
           <div className="mb-3">
             <label>Email</label>
             <input
@@ -52,7 +56,7 @@ export default function Login() {
               className="form-control"
               name="email"
               value={form.email}
-              onChange={'handleChange'}
+              onChange={"handleChange"}
               required
             />
           </div>
@@ -63,7 +67,7 @@ export default function Login() {
               className="form-control"
               name="password"
               value={form.password}
-              onChange={'handleChange'}
+              onChange={"handleChange"}
               required
             />
           </div>
@@ -71,6 +75,7 @@ export default function Login() {
             Login
           </button>
         </form>
+        */}
       </div>
     </div>
   );
