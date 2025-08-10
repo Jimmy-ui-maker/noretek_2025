@@ -21,8 +21,8 @@ export default function AboutUS() {
               create cherished moments with your loved ones.
             </p>
             <p className="text">
-              With Noretek, you can trust that we're not just fueling your
-              home—we're fueling your dreams.
+              With Noretek, you can trust that were not just fueling your
+              home—were fueling your dreams.
             </p>
           </div>
           <div class="col-lg-12 d-flex flex-column bg-primary justify-content-center    ">
