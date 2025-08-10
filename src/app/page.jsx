@@ -1,4 +1,3 @@
-import AboutUS from "@/MainComponent/About";
 import Navbar from "@/MainComponent/Navbar";
 import QuickLinks from "@/MainComponent/QuickLinks";
 
@@ -35,7 +34,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <AboutUS />
+
       <QuickLinks />
     </>
   );
