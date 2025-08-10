@@ -9,6 +9,7 @@ export default function Login() {
   const [message, setMessage] = useState("");
 
    
+  {/** 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -35,7 +36,7 @@ export default function Login() {
     }
       
   };
-
+*/}
   
   return (
     <div className="container d-flex justify-content-center align-items-center min-vh-100">

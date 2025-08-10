@@ -16,7 +16,7 @@ export default function Signup() {
   });
 
   const [message, setMessage] = useState("");
-
+{/** 
   
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -43,7 +43,7 @@ export default function Signup() {
       setMessage(err.response?.data?.message || "An error occurred");
     }
   };
-
+*/}
   return (
     <div className="container d-flex justify-content-center align-items-center min-vh-100">
       <div className="border p-5 rounded w-100" style={{ maxWidth: 500 }}>
