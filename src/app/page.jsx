@@ -8,7 +8,7 @@ export default function Home() {
       <section class="mainPage d-flex align-items-center">
         <div class="container">
           <div class="row uper">
-            <div class="col-lg-6 d-flex flex-column justify-content-center text-start  order-2 order-lg-1 ">
+            <div class="col-lg-6 d-flex flex-column justify-content-center text-lg-start  order-2 order-lg-1 ">
               <h1 data-aos="fade-up">Power your home with confidence</h1>
               <h2 data-aos="fade-up" data-aos-delay="400">
                 Trust Noretek for reliable gas distribution that keeps your home
