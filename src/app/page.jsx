@@ -18,13 +18,13 @@ export default function Home() {
                 <div class="text-center text-lg-start ">
                   <a
                     href="/customer-signin"
-                    class="btn-get-started text-decoration-none py-4 scrollto mx-1 d-inline-flex align-items-center justify-content-center align-self-center"
+                    class="btn-get-started text-decoration-none py-4 scrollto  d-inline-flex align-items-center justify-content-center align-self-center"
                   >
                     <span>Login</span>
                   </a>
                   <a
                     href="/customer-signup"
-                    class="btn-register text-decoration-none py-4 scrollto mx-1 d-inline-flex align-items-center justify-content-center align-self-center"
+                    class="btn-register text-decoration-none py-4 scrollto  d-inline-flex align-items-center justify-content-center align-self-center"
                   >
                     <span>Register Now</span>
                   </a>
