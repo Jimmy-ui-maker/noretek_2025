@@ -34,9 +34,11 @@ export default function QuickLinks() {
       <div className="container" data-aos="fade-up">
         <div className="section-title ">
           <h2 className=" text-center fw-bold  text-uppercase">
-            Here are Quick Liks.
+            Here are Quick Links.
           </h2>
-          <p className=" text-center ">You can use this links to explore hidden route for now.</p>
+          <p className=" text-center ">
+            You can use this links to explore hidden route for now.
+          </p>
         </div>
 
         <div className="row g-4  align-items-center text-center">
