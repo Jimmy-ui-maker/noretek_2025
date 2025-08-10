@@ -17,12 +17,12 @@ export default function Signup() {
 
   const [message, setMessage] = useState("");
 
+  
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
-   
     e.preventDefault();
 
     if (form.password !== form.confirmPassword) {
@@ -38,11 +38,10 @@ export default function Signup() {
     try {
       const res = await axios.post("/api/signup", form);
       setMessage(res.data.message);
-      router.push('/customer-signin');
+      router.push("/customer-signin");
     } catch (err) {
       setMessage(err.response?.data?.message || "An error occurred");
     }
-      
   };
 
   return (
@@ -51,7 +50,7 @@ export default function Signup() {
         <h4 className="mb-4 text-center">Sign Up</h4>
 
         {message && <div className="alert alert-info">{message}</div>}
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={'handleSubmit'}>
           <div className="mb-3">
             <label>Name</label>
             <input
@@ -59,7 +58,7 @@ export default function Signup() {
               className="form-control"
               name="name"
               required
-              onChange={handleChange}
+              onChange={'handleChange'}
             />
           </div>
           <div className="mb-3">
@@ -69,7 +68,7 @@ export default function Signup() {
               className="form-control"
               name="email"
               required
-              onChange={handleChange}
+              onChange={'handleChange'}
             />
           </div>
           <div className="mb-3">
@@ -78,7 +77,7 @@ export default function Signup() {
               type="text"
               className="form-control"
               name="phone"
-              onChange={handleChange}
+              onChange={'handleChange'}
             />
           </div>
           <div className="mb-3">
@@ -87,7 +86,7 @@ export default function Signup() {
               type="text"
               className="form-control"
               name="address"
-              onChange={handleChange}
+              onChange={'handleChange'}
             />
           </div>
           <div className="mb-3">
@@ -97,7 +96,7 @@ export default function Signup() {
               className="form-control"
               name="password"
               required
-              onChange={handleChange}
+              onChange={'handleChange'}
             />
           </div>
           <div className="mb-3">
@@ -107,7 +106,7 @@ export default function Signup() {
               className="form-control"
               name="confirmPassword"
               required
-              onChange={handleChange}
+              onChange={'handleChange'}
             />
           </div>
           <button type="submit" className="btn btn-primary w-100">
