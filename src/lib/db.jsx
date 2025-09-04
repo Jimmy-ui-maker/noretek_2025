@@ -1,25 +1,21 @@
-import mysql from 'mysql2/promise';
+// lib/mongodb.js
+import mongoose from "mongoose";
 
-const db = mysql.createPool({
-  host: 'sql5.freesqldatabase.com',
-  user: 'sql5794333',
-  password: 'jfHpbHbeCu',  // your xampp password, empty by default
-  database: 'sql5794333',
-  port: 3306
-});
+const MONGODB_URI = "mongodb://127.0.0.1:27017/noretek_energy_db"; // Local connection
 
+if (!MONGODB_URI) {
+  throw new Error("Please define the MONGODB_URI environment variable");
+}
 
-export default db;
+let isConnected = false;
 
-{/** 
-import mysql from 'mysql2/promise';
-
-const db = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: '',  // your xampp password, empty by default
-  database: 'Noretek_Energy_db'
-});
-
-export default db;
-*/}
+export async function connectDB() {
+  if (isConnected) return;
+  try {
+    const db = await mongoose.connect(MONGODB_URI);
+    isConnected = db.connections[0].readyState;
+    console.log("✅ MongoDB Connected");
+  } catch (error) {
+    console.error("❌ MongoDB connection error:", error);
+  }
+}

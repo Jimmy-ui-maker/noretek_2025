@@ -5,6 +5,8 @@
   --testColor:#0b0c27;
   --hoverColor: #75757a;
   --softColor:#f1fbff;
+    --praColor: #023e8a;
+  --ppColor: #023e8a;
 }
 *{
   font-family: poppins;
@@ -145,3 +147,16 @@ body {
   width: 250px;
 }
 
+.titleColor {
+  color: var(--ppColor) !important;
+  font-weight: 700px;
+
+}.primaryColor {
+  background-color: var(--praColor) !important;
+  color: var(--WhiteColor) !important;
+}
+.primaryColor:hover {
+  background-color: var(--praColor);
+  color: var(--WhiteColor);
+  opacity: 0.8;
+}

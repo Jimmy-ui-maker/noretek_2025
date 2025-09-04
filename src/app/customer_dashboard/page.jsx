@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import CustomerSupportForm from "./supportContact/page";
 
 export default function UserDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -78,22 +79,22 @@ export default function UserDashboard() {
               </a>
             </li>
             <li className="nav-item mb-2">
-              <a className="nav-link text-white" href="#">
+              <a className="nav-link text-white" href="/wallet">
                 <i className="bi bi-wallet2 me-2"></i>Credit Wallet
               </a>
             </li>
             <li className="nav-item mb-2">
-              <a className="nav-link text-white" href="#">
+              <a className="nav-link text-white" href="/wallet">
                 <i className="bi bi-piggy-bank me-2"></i>Wallet Balance
               </a>
             </li>
             <li className="nav-item mb-2">
-              <a className="nav-link text-white" href="#">
+              <a className="nav-link text-white" href="/payment">
                 <i className="bi bi-credit-card me-2"></i>Buy Token
               </a>
             </li>
             <li className="nav-item mb-2">
-              <a className="nav-link text-white" href="#">
+              <a className="nav-link text-white" href="/customer_dashboard#supportContact">
                 <i className="bi bi-phone me-2"></i>Contact Support
               </a>
             </li>
@@ -195,6 +196,10 @@ export default function UserDashboard() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div id="supportContact" className="">
+        <CustomerSupportForm/>
       </div>
     </>
   );
