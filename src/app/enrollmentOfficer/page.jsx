@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { Line } from "react-chartjs-2";
 import {
@@ -13,6 +14,7 @@ import {
   PointElement,
   LineElement,
 } from "chart.js";
+
 import PropertyForm from "@/MainComponent/(SubComponents)/EnrollmentComponent/PropertyForm";
 import PropertyUnitForm from "@/MainComponent/(SubComponents)/EnrollmentComponent/PropertyUnitForm";
 import PropertyTablesEnrollment from "@/MainComponent/(SubComponents)/EnrollmentComponent/PropertyTablesEnrollment";
@@ -30,9 +32,162 @@ ChartJS.register(
 );
 
 export default function Dashboard() {
+  const router = useRouter();
+
   const [activeContent, setActiveContent] = useState("Dashboard");
 
-  // Sidebar menu structure
+  // auth states
+  const [user, setUser] = useState(null); // parsed user object
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  // login form states (shown when not authenticated)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [loggingIn, setLoggingIn] = useState(false);
+
+  // Helper: decode JWT payload to check expiry (no extra lib)
+  const decodeJwtPayload = (token) => {
+    try {
+      const parts = token.split(".");
+      if (parts.length !== 3) return null;
+      const payload = parts[1];
+      // base64url -> base64
+      const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+      const json = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+          .join("")
+      );
+      return JSON.parse(json);
+    } catch (e) {
+      return null;
+    }
+  };
+
+  // check token + user on mount
+  useEffect(() => {
+    const check = () => {
+      const token = localStorage.getItem("token");
+      // support both "user" and "staff" keys (some parts used both)
+      const stored =
+        localStorage.getItem("user") || localStorage.getItem("staff") || null;
+
+      if (!token || !stored) {
+        setCheckingAuth(false);
+        return; // not authenticated => show login form
+      }
+
+      const payload = decodeJwtPayload(token);
+      if (!payload || (payload.exp && payload.exp * 1000 < Date.now())) {
+        // token invalid/expired
+        localStorage.removeItem("token");
+        setCheckingAuth(false);
+        return;
+      }
+
+      try {
+        const parsedUser = JSON.parse(stored);
+        // role enforcement: only Enrollment Officer can stay here
+        if (parsedUser.role === "Enrollment Officer") {
+          setUser(parsedUser);
+          setCheckingAuth(false);
+        } else if (parsedUser.role === "Admin") {
+          // redirect admin to admin dashboard
+          router.push("/admin_dashboard");
+        } else if (parsedUser.role === "Support Officer") {
+          router.push("/support_dashboard");
+        } else {
+          // unknown role -> clear and show login
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          localStorage.removeItem("staff");
+          setCheckingAuth(false);
+        }
+      } catch (e) {
+        localStorage.removeItem("token");
+        setCheckingAuth(false);
+      }
+    };
+
+    check();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // login handler (shows inline form if not logged in)
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoginError("");
+    setLoggingIn(true);
+
+    try {
+      const res = await fetch("/api/stafflogin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!data.success) {
+        setLoginError(data.error || "Invalid credentials");
+        setLoggingIn(false);
+        return;
+      }
+
+      // prefer data.user but accept data.staff too
+      const loggedUser = data.user || data.staff;
+      if (!loggedUser) {
+        setLoginError("Login response missing user data");
+        setLoggingIn(false);
+        return;
+      }
+
+      // role check
+      if (loggedUser.role !== "Enrollment Officer") {
+        // route other roles to their dashboards
+        if (loggedUser.role === "Admin") {
+          // store and redirect
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("user", JSON.stringify(loggedUser));
+          router.push("/admin_dashboard");
+          return;
+        } else if (loggedUser.role === "Support Officer") {
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("user", JSON.stringify(loggedUser));
+          router.push("/support_dashboard");
+          return;
+        } else {
+          setLoginError("Access denied for this role");
+          setLoggingIn(false);
+          return;
+        }
+      }
+
+      // store token + user and show enrollment dashboard
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(loggedUser));
+      setUser(loggedUser);
+      setEmail("");
+      setPassword("");
+      setLoggingIn(false);
+    } catch (err) {
+      console.error("Login error:", err);
+      setLoginError("Server error");
+      setLoggingIn(false);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("staff");
+    setUser(null);
+    router.push("/"); // or router.push("/stafflogin") if you prefer
+  };
+
+  // Sidebar menu items (unchanged)
   const sidebarMenu = [
     {
       title: "Adding Form",
@@ -44,7 +199,7 @@ export default function Dashboard() {
     },
   ];
 
-  // Dummy content
+  // content renderer (unchanged)
   const renderContent = () => {
     switch (activeContent) {
       case "Add Property":
@@ -71,12 +226,62 @@ export default function Dashboard() {
             </div>
           </div>
         );
-
       default:
         return null;
     }
   };
 
+  // while we check token, show loader
+  if (checkingAuth) {
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <div>⏳ Checking authentication...</div>
+      </div>
+    );
+  }
+
+  // if not authenticated show inline login form
+  if (!user) {
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+        <div className="card p-4 shadow" style={{ width: 400 }}>
+          <h4 className="mb-3 text-center">Staff Login (Enrollment)</h4>
+
+          {loginError && <div className="alert alert-danger">{loginError}</div>}
+
+          <form onSubmit={handleLogin}>
+            <div className="mb-3">
+              <label className="form-label">Email</label>
+              <input
+                className="form-control"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Password</label>
+              <input
+                className="form-control"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+
+            <button className="btn btn-dark w-100" type="submit" disabled={loggingIn}>
+              {loggingIn ? "Logging in..." : "Login"}
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  // Authenticated: render dashboard (keeps original layout, adds email + logout)
   return (
     <div className="customer-support d-flex flex-column min-vh-100">
       {/* Navbar (Sticky) */}
@@ -90,6 +295,7 @@ export default function Dashboard() {
         >
           <i className="bi bi-list"></i>
         </button>
+
         <a
           href="/"
           className="d-flex align-items-center text-decoration-none text-dark"
@@ -101,15 +307,14 @@ export default function Dashboard() {
             width={120}
           />
         </a>
-        <div className="d-flex align-items-center gap-3">
+
+        <div className="d-flex align-items-center gap-3 ms-auto">
           <i className="bi bi-search"></i>
           <i className="bi bi-bell"></i>
-          <img
-            src="/assets/person.png"
-            className="profile rounded-5"
-            alt="User"
-            width={35}
-          />
+          <span className="fw-semibold">{user.email}</span>
+          <button onClick={handleLogout} className="btn btn-sm btn-outline-danger">
+            Logout
+          </button>
         </div>
       </nav>
 
@@ -130,6 +335,7 @@ export default function Dashboard() {
                 </a>
               </li>
             </ul>
+
             {sidebarMenu.map((section, idx) => (
               <div className="accordion-item border-0" key={idx}>
                 <h2 className="accordion-header" id={`heading${idx}`}>
@@ -143,10 +349,7 @@ export default function Dashboard() {
                   </button>
                 </h2>
                 {section.children.length > 0 && (
-                  <div
-                    id={`collapse${idx}`}
-                    className="accordion-collapse collapse"
-                  >
+                  <div id={`collapse${idx}`} className="accordion-collapse collapse">
                     <div className="accordion-body p-2">
                       <ul className="list-unstyled mb-0">
                         {section.children.map((child, i) => (
@@ -169,20 +372,12 @@ export default function Dashboard() {
         </aside>
 
         {/* Sidebar - Mobile (Offcanvas) */}
-        <div
-          className="offcanvas offcanvas-start"
-          tabIndex="-1"
-          id="mobileSidebar"
-        >
+        <div className="offcanvas offcanvas-start" tabIndex="-1" id="mobileSidebar">
           <div className="offcanvas-header">
             <h5 className="offcanvas-title">Menu</h5>
-            <button
-              type="button"
-              className="btn-close"
-              data-bs-dismiss="offcanvas"
-              aria-label="Close"
-            ></button>
+            <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" />
           </div>
+
           <div className="offcanvas-body">
             <div className="accordion border-0" id="mobileSidebarMenu">
               {sidebarMenu.map((section, idx) => (
@@ -198,10 +393,7 @@ export default function Dashboard() {
                     </button>
                   </h2>
                   {section.children.length > 0 && (
-                    <div
-                      id={`mobileCollapse${idx}`}
-                      className="accordion-collapse collapse"
-                    >
+                    <div id={`mobileCollapse${idx}`} className="accordion-collapse collapse">
                       <div className="accordion-body p-2">
                         <ul className="list-unstyled mb-0">
                           {section.children.map((child, i) => (
@@ -209,9 +401,7 @@ export default function Dashboard() {
                               <button
                                 onClick={() => {
                                   setActiveContent(child.key);
-                                  document
-                                    .getElementById("mobileSidebar")
-                                    .classList.remove("show"); // close sidebar
+                                  document.getElementById("mobileSidebar")?.classList.remove("show");
                                 }}
                                 className="btn btn-link text-decoration-none p-0"
                               >
@@ -234,16 +424,19 @@ export default function Dashboard() {
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h4 className="fw-bold mb-0">{activeContent}</h4>
             <span className="text-muted">
-              August 12<sup>th</sup> Tuesday, 2025
+              {new Date().toLocaleDateString("en-US", {
+                weekday: "long",
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              })}
             </span>
           </div>
 
           {/* Default Dashboard stats */}
           {activeContent === "Dashboard" && (
             <>
-              {/* Stats Row */}
               <div className="row mb-4">
-                {/* Customers */}
                 <div className="col-lg-12 col-md-6 mb-3">
                   <div className="card h-100 text-center">
                     <div className="card-body">
@@ -253,7 +446,6 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* Awaiting */}
                 <div className="col-lg-12 col-md-6 mb-3">
                   <div className="card h-100 text-center">
                     <div className="card-body">

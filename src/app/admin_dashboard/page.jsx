@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
+import { useRouter } from "next/navigation";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -29,6 +29,39 @@ ChartJS.register(
 
 export default function AdminDashboard() {
   const [activeContent, setActiveContent] = useState("Dashboard");
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  // ✅ Auth + role check
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
+
+    if (storedUser && token) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        if (parsedUser.role === "Admin") {
+          setUser(parsedUser);
+        } else {
+          router.push("/stafflogin");
+        }
+      } catch (e) {
+        localStorage.clear();
+        router.push("/stafflogin");
+      }
+    } else {
+      router.push("/stafflogin");
+    }
+    setLoading(false);
+  }, [router]);
+
+  if (loading) {
+    return <p className="text-center mt-5">⏳ Checking authentication...</p>;
+  }
+  if (!user) {
+    return null;
+  }
 
   const donutData = [
     { label: "Available", value: 45, color: "bg-success" },
@@ -65,7 +98,6 @@ export default function AdminDashboard() {
         { name: "Property Unit", key: "Property Unit" },
       ],
     },
-
     {
       title: "View Calin Info",
       children: [
@@ -78,7 +110,7 @@ export default function AdminDashboard() {
     },
   ];
 
-  // Dummy content
+  // Dynamic content renderer
   const renderContent = () => {
     switch (activeContent) {
       case "sales":
@@ -99,7 +131,6 @@ export default function AdminDashboard() {
             </div>
           </div>
         );
-
       case "Property":
         return (
           <div className="card mb-4">
@@ -118,7 +149,6 @@ export default function AdminDashboard() {
             </div>
           </div>
         );
-
       case "calinMeter":
         return (
           <div className="card mb-4">
@@ -171,8 +201,8 @@ export default function AdminDashboard() {
 
   return (
     <div className="customer-support d-flex flex-column min-vh-100">
-      {/* Navbar (Sticky) */}
-      <nav className="navbar navbar-light bg-white sticky-top px-3">
+      {/* ✅ Navbar with email + logout aligned right */}
+      <nav className="navbar navbar-light bg-white sticky-top px-3 shadow-sm">
         <button
           className="btn shadow-none border-0 d-lg-none"
           type="button"
@@ -193,20 +223,22 @@ export default function AdminDashboard() {
             width={120}
           />
         </a>
-        <div className="d-flex align-items-center gap-3">
-          <i className="bi bi-search"></i>
-          <i className="bi bi-bell"></i>
-          <img
-            src="/assets/person.png"
-            className="profile rounded-5"
-            alt="User"
-            width={35}
-          />
+        <div className="ms-auto d-flex align-items-center gap-3">
+          <span className="text-muted">{user.email}</span>
+          <button
+            className="btn btn-outline-danger btn-sm"
+            onClick={() => {
+              localStorage.clear();
+              router.push("/stafflogin");
+            }}
+          >
+            Logout
+          </button>
         </div>
       </nav>
 
       <div className="d-flex flex-grow-1">
-        {/* Sidebar - Desktop */}
+        {/* Sidebar (Desktop) */}
         <aside
           className="bg-white border-end p-3 d-none d-lg-block"
           style={{ width: "250px" }}
@@ -260,7 +292,7 @@ export default function AdminDashboard() {
           </div>
         </aside>
 
-        {/* Sidebar - Mobile (Offcanvas) */}
+        {/* Offcanvas Sidebar (Mobile) */}
         <div
           className="offcanvas offcanvas-start"
           tabIndex="-1"
@@ -303,7 +335,7 @@ export default function AdminDashboard() {
                                   setActiveContent(child.key);
                                   document
                                     .getElementById("mobileSidebar")
-                                    .classList.remove("show"); // close sidebar
+                                    .classList.remove("show");
                                 }}
                                 className="btn btn-link text-decoration-none p-0"
                               >
@@ -330,12 +362,11 @@ export default function AdminDashboard() {
             </span>
           </div>
 
-          {/* Default Dashboard stats */}
+          {/* Default Dashboard */}
           {activeContent === "Dashboard" && (
             <>
-              {/* Stats Row */}
               <div className="row mb-4">
-                {/* Donut Chart */}
+                {/* Donut */}
                 <div className="col-lg-4 col-md-6 mb-3">
                   <div className="card h-100 text-center">
                     <div className="card-body">
@@ -403,7 +434,6 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                 </div>
-
                 {/* Awaiting */}
                 <div className="col-lg-4 col-md-6 mb-3">
                   <div className="card h-100 text-center">
@@ -419,7 +449,7 @@ export default function AdminDashboard() {
             </>
           )}
 
-          {/* Render Dynamic Content */}
+          {/* Dynamic Content */}
           {renderContent()}
 
           {/* Search + Filter + Chart */}

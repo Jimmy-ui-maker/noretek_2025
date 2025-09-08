@@ -5,20 +5,44 @@ import { useState } from "react";
 
 export default function Dashboard() {
   const [activeContent, setActiveContent] = useState("Dashboard");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  // Hardcoded Super Admin Credentials
+  const SUPER_ADMIN = {
+    username: "super1",
+    password: "password",
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (username === SUPER_ADMIN.username && password === SUPER_ADMIN.password) {
+      setIsAuthenticated(true);
+      setError("");
+    } else {
+      setError("Invalid username or password");
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setUsername("");
+    setPassword("");
+  };
 
   const donutData = [
     { label: "Available", value: 45, color: "bg-success" },
     { label: "Sold", value: 38, color: "bg-primary" },
     { label: "Lost", value: 17, color: "bg-danger" },
-   
-     ];
+  ];
 
   const sidebarMenu = [
     {
-      
       title: "Assignment",
       children: [
-        { name: "Admin Form", key: "Super Admin Form",  },
+        { name: "Admin Form", key: "Super Admin Form" },
         { name: "Assign Role", key: "Assign Role" },
       ],
     },
@@ -37,7 +61,7 @@ export default function Dashboard() {
         return (
           <div className="card mb-4">
             <div className="card-body">
-              <h5 className="card-title titleColor ">Admin Form Report</h5>
+              <h5 className="card-title titleColor">Admin Form Report</h5>
               <AdminForm />
             </div>
           </div>
@@ -46,7 +70,7 @@ export default function Dashboard() {
         return (
           <div className="card mb-4">
             <div className="card-body">
-              <h5 className="card-title  titleColor ">Assign Role Report</h5>
+              <h5 className="card-title titleColor">Assign Role Report</h5>
               <AdminTables />
             </div>
           </div>
@@ -69,25 +93,53 @@ export default function Dashboard() {
             </div>
           </div>
         );
-
       default:
         return null;
     }
   };
 
+  // If not authenticated → Show login form
+  if (!isAuthenticated) {
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+        <div className="card p-4 shadow-sm" style={{ width: "350px" }}>
+          <h4 className="text-center mb-3 fw-bold">Super Admin Login</h4>
+          {error && <div className="alert alert-danger">{error}</div>}
+          <form onSubmit={handleLogin}>
+            <div className="mb-3">
+              <label className="form-label">Username</label>
+              <input
+                type="text"
+                className="form-control"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Password</label>
+              <input
+                type="password"
+                className="form-control"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            <button type="submit" className="btn btn-primary w-100">
+              Login
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  // If authenticated → Show dashboard
   return (
     <div className="customer-support d-flex flex-column min-vh-100">
       {/* Navbar (Sticky) */}
       <nav className="navbar navbar-light bg-white sticky-top px-3 shadow-sm">
-        <button
-          className="btn shadow-none border-0 d-lg-none"
-          type="button"
-          data-bs-toggle="offcanvas"
-          data-bs-target="#mobileSidebar"
-          aria-controls="mobileSidebar"
-        >
-          <i className="bi bi-list"></i>
-        </button>
         <a
           href="/"
           className="d-flex align-items-center text-decoration-none text-dark"
@@ -102,17 +154,18 @@ export default function Dashboard() {
         <div className="d-flex align-items-center gap-3">
           <i className="bi bi-search"></i>
           <i className="bi bi-bell"></i>
-          <img
-            src="/assets/person.png"
-            className="profile rounded-5"
-            alt="User"
-            width={35}
-          />
+          <span className="fw-semibold">{SUPER_ADMIN.username}</span>
+          <button
+            onClick={handleLogout}
+            className="btn btn-sm btn-outline-danger"
+          >
+            Logout
+          </button>
         </div>
       </nav>
 
       <div className="d-flex flex-grow-1">
-        {/* Sidebar - Desktop */}
+        {/* Sidebar */}
         <aside
           className="bg-white border-end p-3 d-none d-lg-block"
           style={{ width: "250px" }}
@@ -165,67 +218,6 @@ export default function Dashboard() {
             ))}
           </div>
         </aside>
-
-        {/* Sidebar - Mobile (Offcanvas) */}
-        <div
-          className="offcanvas offcanvas-start"
-          tabIndex="-1"
-          id="mobileSidebar"
-        >
-          <div className="offcanvas-header border-0">
-            <h5 className="offcanvas-title">Menu</h5>
-            <button
-              type="button"
-              className="btn-close shadow-none"
-              data-bs-dismiss="offcanvas"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div className="offcanvas-body border-0">
-            <div className="accordion border-0" id="mobileSidebarMenu">
-              {sidebarMenu.map((section, idx) => (
-                <div className="accordion-item border-0" key={idx}>
-                  <h2 className="accordion-header">
-                    <button
-                      className="accordion-button collapsed fw-semibold shadow-none border-0"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target={`#mobileCollapse${idx}`}
-                    >
-                      {section.title}
-                    </button>
-                  </h2>
-                  {section.children.length > 0 && (
-                    <div
-                      id={`mobileCollapse${idx}`}
-                      className="accordion-collapse collapse"
-                    >
-                      <div className="accordion-body p-2 border-0">
-                        <ul className="list-unstyled mb-0">
-                          {section.children.map((child, i) => (
-                            <li key={i} className="p-1">
-                              <button
-                                onClick={() => {
-                                  setActiveContent(child.key);
-                                  document
-                                    .getElementById("mobileSidebar")
-                                    .classList.remove("show");
-                                }}
-                                className="btn btn-link text-decoration-none p-0"
-                              >
-                                {child.name}
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
 
         {/* Main Content */}
         <main className="flex-grow-1 p-4 bg-light">

@@ -30,7 +30,21 @@ export default function StaffLoginPage() {
         localStorage.setItem("user", JSON.stringify(data.user));
 
         setStatus("Login successful ✅ Redirecting...");
-        router.push("/dashboard"); // redirect to dashboard
+
+        // Role-based redirection
+        switch (data.user.role) {
+          case "Admin":
+            router.push("/admin_dashboard");
+            break;
+          case "Enrollment Officer":
+            router.push("/enrollmentOfficer");
+            break;
+          case "Support Officer":
+            router.push("/support_dashboard");
+            break;
+          default:
+            router.push("/dashboard"); // fallback
+        }
       } else {
         setStatus("❌ " + data.error);
       }
